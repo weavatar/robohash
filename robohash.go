@@ -9,7 +9,6 @@ import (
 	"math/rand/v2"
 	"path"
 	"sort"
-	"strconv"
 	"strings"
 
 	"golang.org/x/image/draw"
@@ -254,20 +253,26 @@ func (r *RoboHash) getListOfFiles(basePath string) ([]string, error) {
 		chosen = append(chosen, file)
 	}
 
+	// Sort chosen files based on the directory name first
+	// chosen -> 001#Eyes
 	sort.Slice(chosen, func(i, j int) bool {
-		iParts := strings.Split(path.Base(chosen[i]), "#")
-		jParts := strings.Split(path.Base(chosen[j]), "#")
+		iBase := path.Base(path.Dir(chosen[i]))
+		jBase := path.Base(path.Dir(chosen[j]))
+		return iBase < jBase
+	})
+	// Sort chosen files based on the directory part name second
+	// chosen -> 003#01Body sorted by 01Body
+	sort.Slice(chosen, func(i, j int) bool {
+		iName := path.Base(path.Dir(chosen[i]))
+		jName := path.Base(path.Dir(chosen[j]))
+		iParts := strings.Split(iName, "#")
+		jParts := strings.Split(jName, "#")
 
 		if len(iParts) > 1 && len(jParts) > 1 {
-			iNumStr := strings.Split(iParts[1], ".")[0]
-			jNumStr := strings.Split(jParts[1], ".")[0]
-			iNum, iErr := strconv.Atoi(iNumStr)
-			jNum, jErr := strconv.Atoi(jNumStr)
-			if iErr == nil && jErr == nil {
-				return iNum < jNum
-			}
+			return iParts[1] < jParts[1]
 		}
-		return chosen[i] < chosen[j]
+
+		return iName < jName
 	})
 
 	return chosen, nil
