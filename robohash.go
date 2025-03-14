@@ -24,7 +24,7 @@ type RoboHash struct {
 	sets, bgSets, colors []string
 }
 
-func NewRoboHash(hash []byte, roboSet, bgSet string) (*RoboHash, error) {
+func New(hash []byte, roboSet, bgSet string) (*RoboHash, error) {
 	h := fnv.New64a()
 	if _, err := h.Write(hash); err != nil {
 		return nil, err

@@ -7,7 +7,7 @@ import (
 
 func TestNewRoboHash(t *testing.T) {
 	t.Run("CreateWithEmptyString", func(t *testing.T) {
-		r, err := NewRoboHash([]byte(""), "", "")
+		r, err := New([]byte(""), "", "")
 		if err != nil {
 			t.Errorf("Expected no error with empty string, got: %v", err)
 		}
@@ -17,8 +17,8 @@ func TestNewRoboHash(t *testing.T) {
 	})
 
 	t.Run("CreateWithDifferentStrings", func(t *testing.T) {
-		r1, err1 := NewRoboHash([]byte("test1"), "", "")
-		r2, err2 := NewRoboHash([]byte("test2"), "", "")
+		r1, err1 := New([]byte("test1"), "", "")
+		r2, err2 := New([]byte("test2"), "", "")
 
 		if err1 != nil || err2 != nil {
 			t.Errorf("Expected no errors, got: %v, %v", err1, err2)
@@ -31,8 +31,8 @@ func TestNewRoboHash(t *testing.T) {
 	})
 
 	t.Run("CreateWithSameString", func(t *testing.T) {
-		r1, _ := NewRoboHash([]byte("same"), "", "")
-		r2, _ := NewRoboHash([]byte("same"), "", "")
+		r1, _ := New([]byte("same"), "", "")
+		r2, _ := New([]byte("same"), "", "")
 
 		// Same string should produce deterministic results
 		if len(r1.sets) != len(r2.sets) || len(r1.bgSets) != len(r2.bgSets) {
@@ -43,7 +43,7 @@ func TestNewRoboHash(t *testing.T) {
 
 func TestAssemble(t *testing.T) {
 	t.Run("DefaultAssembly", func(t *testing.T) {
-		r, err := NewRoboHash([]byte("test"), "", "")
+		r, err := New([]byte("test"), "", "")
 		if err != nil {
 			t.Fatalf("Failed to create RoboHash: %v", err)
 		}
@@ -64,7 +64,7 @@ func TestAssemble(t *testing.T) {
 	})
 
 	t.Run("AssembleWithAnySet", func(t *testing.T) {
-		r, _ := NewRoboHash([]byte("test"), "any", "")
+		r, _ := New([]byte("test"), "any", "")
 		img, err := r.Assemble()
 
 		if err != nil {
@@ -76,7 +76,7 @@ func TestAssemble(t *testing.T) {
 	})
 
 	t.Run("AssembleWithAnyBackground", func(t *testing.T) {
-		r, _ := NewRoboHash([]byte("test"), "set1", "any")
+		r, _ := New([]byte("test"), "set1", "any")
 		img, err := r.Assemble()
 
 		if err != nil {
@@ -88,7 +88,7 @@ func TestAssemble(t *testing.T) {
 	})
 
 	t.Run("AssembleWithInvalidSet", func(t *testing.T) {
-		r, _ := NewRoboHash([]byte("test"), "nonexistent", "")
+		r, _ := New([]byte("test"), "nonexistent", "")
 		img, err := r.Assemble()
 
 		if err != nil {
@@ -100,7 +100,7 @@ func TestAssemble(t *testing.T) {
 	})
 
 	t.Run("AssembleWithInvalidBackground", func(t *testing.T) {
-		r, _ := NewRoboHash([]byte("test"), "set1", "nonexistent")
+		r, _ := New([]byte("test"), "set1", "nonexistent")
 		img, err := r.Assemble()
 
 		if err != nil {
@@ -112,8 +112,8 @@ func TestAssemble(t *testing.T) {
 	})
 
 	t.Run("DeterministicImageGeneration", func(t *testing.T) {
-		r1, _ := NewRoboHash([]byte("deterministic"), "set1", "")
-		r2, _ := NewRoboHash([]byte("deterministic"), "set1", "")
+		r1, _ := New([]byte("deterministic"), "set1", "")
+		r2, _ := New([]byte("deterministic"), "set1", "")
 
 		img1, _ := r1.Assemble()
 		img2, _ := r2.Assemble()
